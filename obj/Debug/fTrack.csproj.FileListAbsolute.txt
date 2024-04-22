@@ -1,0 +1,10 @@
+C:\Users\nyaek\Desktop\fTrack\fTrack\bin\Debug\fTrack.exe.config
+C:\Users\nyaek\Desktop\fTrack\fTrack\bin\Debug\fTrack.exe
+C:\Users\nyaek\Desktop\fTrack\fTrack\bin\Debug\fTrack.pdb
+C:\Users\nyaek\Desktop\fTrack\fTrack\obj\Debug\fTrack.csproj.AssemblyReference.cache
+C:\Users\nyaek\Desktop\fTrack\fTrack\obj\Debug\fTrack.Properties.Resources.resources
+C:\Users\nyaek\Desktop\fTrack\fTrack\obj\Debug\fTrack.csproj.GenerateResource.cache
+C:\Users\nyaek\Desktop\fTrack\fTrack\obj\Debug\fTrack.csproj.CoreCompileInputs.cache
+C:\Users\nyaek\Desktop\fTrack\fTrack\obj\Debug\fTrack.exe
+C:\Users\nyaek\Desktop\fTrack\fTrack\obj\Debug\fTrack.pdb
+C:\Users\nyaek\Desktop\fTrack\fTrack\obj\Debug\fTrack.fTrack.resources
