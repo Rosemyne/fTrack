@@ -39,8 +39,13 @@
             this.newAccText = new System.Windows.Forms.Label();
             this.newDebtText = new System.Windows.Forms.Label();
             this.newTransText = new System.Windows.Forms.Label();
-            this.finishButton = new System.Windows.Forms.Button();
-            this.cancelButton = new System.Windows.Forms.Button();
+            this.debtAccAdd = new System.Windows.Forms.Button();
+            this.createAccCancel = new System.Windows.Forms.Button();
+            this.credAccAdd = new System.Windows.Forms.Button();
+            this.transactionAdd = new System.Windows.Forms.Button();
+            this.AccName = new System.Windows.Forms.TextBox();
+            this.AccBal = new System.Windows.Forms.TextBox();
+            this.InterestRate = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // cashTotal
@@ -116,6 +121,8 @@
             // includeDebtOption
             // 
             this.includeDebtOption.AutoSize = true;
+            this.includeDebtOption.Checked = true;
+            this.includeDebtOption.CheckState = System.Windows.Forms.CheckState.Checked;
             this.includeDebtOption.Location = new System.Drawing.Point(576, 85);
             this.includeDebtOption.Name = "includeDebtOption";
             this.includeDebtOption.Size = new System.Drawing.Size(111, 20);
@@ -138,11 +145,11 @@
             // 
             this.newDebtText.AutoSize = true;
             this.newDebtText.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.newDebtText.Location = new System.Drawing.Point(537, 36);
+            this.newDebtText.Location = new System.Drawing.Point(451, 36);
             this.newDebtText.Name = "newDebtText";
-            this.newDebtText.Size = new System.Drawing.Size(195, 46);
+            this.newDebtText.Size = new System.Drawing.Size(353, 46);
             this.newDebtText.TabIndex = 11;
-            this.newDebtText.Text = "New Debt";
+            this.newDebtText.Text = "New Debt Account";
             this.newDebtText.Visible = false;
             // 
             // newTransText
@@ -156,36 +163,92 @@
             this.newTransText.Text = "New Transaction";
             this.newTransText.Visible = false;
             // 
-            // finishButton
+            // debtAccAdd
             // 
-            this.finishButton.Location = new System.Drawing.Point(459, 475);
-            this.finishButton.Name = "finishButton";
-            this.finishButton.Size = new System.Drawing.Size(128, 35);
-            this.finishButton.TabIndex = 13;
-            this.finishButton.Text = "Add";
-            this.finishButton.UseVisualStyleBackColor = true;
-            this.finishButton.Visible = false;
-            this.finishButton.Click += new System.EventHandler(this.finishButton_Click);
+            this.debtAccAdd.Location = new System.Drawing.Point(459, 475);
+            this.debtAccAdd.Name = "debtAccAdd";
+            this.debtAccAdd.Size = new System.Drawing.Size(128, 35);
+            this.debtAccAdd.TabIndex = 13;
+            this.debtAccAdd.Text = "Add";
+            this.debtAccAdd.UseVisualStyleBackColor = true;
+            this.debtAccAdd.Visible = false;
+            this.debtAccAdd.Click += new System.EventHandler(this.debtAccAdd_click);
             // 
-            // cancelButton
+            // createAccCancel
             // 
-            this.cancelButton.Location = new System.Drawing.Point(635, 476);
-            this.cancelButton.Name = "cancelButton";
-            this.cancelButton.Size = new System.Drawing.Size(124, 33);
-            this.cancelButton.TabIndex = 14;
-            this.cancelButton.Text = "Cancel";
-            this.cancelButton.UseVisualStyleBackColor = true;
-            this.cancelButton.Visible = false;
-            this.cancelButton.Click += new System.EventHandler(this.cancelButton_Click);
+            this.createAccCancel.Location = new System.Drawing.Point(635, 476);
+            this.createAccCancel.Name = "createAccCancel";
+            this.createAccCancel.Size = new System.Drawing.Size(124, 33);
+            this.createAccCancel.TabIndex = 14;
+            this.createAccCancel.Text = "Cancel";
+            this.createAccCancel.UseVisualStyleBackColor = true;
+            this.createAccCancel.Visible = false;
+            this.createAccCancel.Click += new System.EventHandler(this.cancelButton_Click);
+            // 
+            // credAccAdd
+            // 
+            this.credAccAdd.Location = new System.Drawing.Point(459, 476);
+            this.credAccAdd.Name = "credAccAdd";
+            this.credAccAdd.Size = new System.Drawing.Size(128, 35);
+            this.credAccAdd.TabIndex = 17;
+            this.credAccAdd.Text = "Add";
+            this.credAccAdd.UseVisualStyleBackColor = true;
+            this.credAccAdd.Visible = false;
+            this.credAccAdd.Click += new System.EventHandler(this.credAccAdd_Click);
+            // 
+            // transactionAdd
+            // 
+            this.transactionAdd.Location = new System.Drawing.Point(459, 474);
+            this.transactionAdd.Name = "transactionAdd";
+            this.transactionAdd.Size = new System.Drawing.Size(128, 35);
+            this.transactionAdd.TabIndex = 18;
+            this.transactionAdd.Text = "Add";
+            this.transactionAdd.UseVisualStyleBackColor = true;
+            this.transactionAdd.Visible = false;
+            this.transactionAdd.Click += new System.EventHandler(this.transactionAdd_Click);
+            // 
+            // AccName
+            // 
+            this.AccName.BackColor = System.Drawing.Color.White;
+            this.AccName.Location = new System.Drawing.Point(859, 102);
+            this.AccName.Name = "AccName";
+            this.AccName.Size = new System.Drawing.Size(333, 22);
+            this.AccName.TabIndex = 19;
+            this.AccName.Visible = false;
+            // 
+            // AccBal
+            // 
+            this.AccBal.BackColor = System.Drawing.Color.White;
+            this.AccBal.Location = new System.Drawing.Point(859, 154);
+            this.AccBal.Name = "AccBal";
+            this.AccBal.Size = new System.Drawing.Size(332, 22);
+            this.AccBal.TabIndex = 20;
+            this.AccBal.Visible = false;
+            // 
+            // InterestRate
+            // 
+            this.InterestRate.BackColor = System.Drawing.Color.White;
+            this.InterestRate.Location = new System.Drawing.Point(866, 213);
+            this.InterestRate.Name = "InterestRate";
+            this.InterestRate.Size = new System.Drawing.Size(325, 22);
+            this.InterestRate.TabIndex = 21;
+            this.InterestRate.Visible = false;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
+            this.AutoSize = true;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1225, 528);
-            this.Controls.Add(this.cancelButton);
-            this.Controls.Add(this.finishButton);
+            this.Controls.Add(this.InterestRate);
+            this.Controls.Add(this.AccBal);
+            this.Controls.Add(this.AccName);
+            this.Controls.Add(this.transactionAdd);
+            this.Controls.Add(this.credAccAdd);
+            this.Controls.Add(this.createAccCancel);
+            this.Controls.Add(this.debtAccAdd);
             this.Controls.Add(this.includeDebtOption);
             this.Controls.Add(this.addTransButton);
             this.Controls.Add(this.addDebtButton);
@@ -221,8 +284,13 @@
         private System.Windows.Forms.Label newAccText;
         private System.Windows.Forms.Label newDebtText;
         private System.Windows.Forms.Label newTransText;
-        private System.Windows.Forms.Button finishButton;
-        private System.Windows.Forms.Button cancelButton;
+        private System.Windows.Forms.Button debtAccAdd;
+        private System.Windows.Forms.Button createAccCancel;
+        private System.Windows.Forms.Button credAccAdd;
+        private System.Windows.Forms.Button transactionAdd;
+        private System.Windows.Forms.TextBox AccName;
+        private System.Windows.Forms.TextBox AccBal;
+        private System.Windows.Forms.TextBox InterestRate;
     }
 }
 

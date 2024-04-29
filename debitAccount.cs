@@ -9,9 +9,13 @@ namespace fTrack
     internal class debitAccount: userAccount
     {
 
-        public override void createAccount()
+        public override void createAccount(int AccID, double AccBal, string AccName, double InterestRate)
         {
-            accType = 1;
+            accID = AccID;
+            accBal = AccBal;
+            accName = AccName;
+            interestRate = InterestRate;
         }
+
     }
 }

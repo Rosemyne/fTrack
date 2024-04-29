@@ -10,11 +10,12 @@ namespace fTrack
     internal class creditAccount: userAccount
     {
 
-        public override void createAccount()
+        public override void createAccount(int AccID, double AccBal, string AccName, double InterestRate)
         {
-            accType = 2;
-
+            accID = AccID;
+            accBal = AccBal;
+            accName = AccName;
+            interestRate = InterestRate;
         }
-
     }
 }
