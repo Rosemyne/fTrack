@@ -46,6 +46,7 @@ namespace fTrack
             this.addAccButton.Visible = false;
             this.addDebtButton.Visible = false;
             this.addTransButton.Visible = false;
+            disableDebitAccList();
         }
 
         private void returnToMain()
@@ -111,30 +112,46 @@ namespace fTrack
         {
             returnToMain();
         }
-        private void enableDebitAccList()
+        private void disableDebitAccList()
         {
-
-        }
-        private void disableDebitAccList() 
-        { 
-            for (int i = 0; i < tempDebCount; i++)
+            // Disable controls related to debit accounts
+            foreach (Control control in this.Controls)
             {
-
+                if (control is TextBox textBox && textBox.Name.StartsWith("debAccount"))
+                {
+                    textBox.Enabled = false;
+                    textBox.Visible = false;
+                }
             }
         }
+
         private void genDebitAccList()
         {
             LinkedList<debitAccount> tempDebAccount = accList.getDebitAccount();
-            tempDebCount = tempDebAccount.Count;
-            LinkedListNode<debitAccount> tempNodeDeb = tempDebAccount.Last;
-            debitAccount tempDebitAccount = tempNodeDeb.Value;
-            TextBox textBox = new TextBox();
-            textBox.Text = tempDebitAccount.AccName;
-            textBox.Name = "debAccount" + tempDebCount.ToString();
-            textBox.Location = new Point(42, 130 + ((tempDebCount - 1) * 30));
-            textBox.Font = new Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            textBox.ReadOnly = true;
-            Controls.Add(textBox);  
+            int tempDebCount = tempDebAccount.Count;
+
+            // Clear previous debit account textboxes
+            foreach (Control control in this.Controls)
+            {
+                if (control is TextBox textBox && textBox.Name.StartsWith("debAccount"))
+                {
+                    this.Controls.Remove(textBox);
+                    textBox.Dispose();
+                }
+            }
+
+            // Generate textboxes for debit accounts
+            for (int i = 0; i < tempDebCount; i++)
+            {
+                debitAccount tempDebitAccount = tempDebAccount.ElementAt(i);
+                TextBox textBox = new TextBox();
+                textBox.Text = tempDebitAccount.AccName;
+                textBox.Name = "debAccount" + (i + 1).ToString();
+                textBox.Location = new Point(42, 130 + (i * 30));
+                textBox.Font = new Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                textBox.ReadOnly = true;
+                Controls.Add(textBox);
+            }
         }
     }
 }
