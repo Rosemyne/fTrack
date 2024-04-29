@@ -23,7 +23,6 @@ namespace fTrack
             debitAccount newDebitAccount = new debitAccount();
             newDebitAccount.createAccount(AccID, AccBal, AccName, InterestRate);
             debAccount.AddLast(newDebitAccount);
-            Console.WriteLine("test");
         }
         public void createCreditAccount(double AccBal, string AccName, double InterestRate)
         {

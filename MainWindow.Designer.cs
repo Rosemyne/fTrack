@@ -50,6 +50,7 @@
             // 
             // cashTotal
             // 
+            this.cashTotal.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.cashTotal.AutoSize = true;
             this.cashTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cashTotal.Location = new System.Drawing.Point(568, 36);
@@ -57,6 +58,7 @@
             this.cashTotal.Size = new System.Drawing.Size(119, 46);
             this.cashTotal.TabIndex = 1;
             this.cashTotal.Text = "$0.00";
+            this.cashTotal.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // accText
             // 
@@ -129,6 +131,7 @@
             this.includeDebtOption.TabIndex = 10;
             this.includeDebtOption.Text = "Include Debts";
             this.includeDebtOption.UseVisualStyleBackColor = true;
+            this.includeDebtOption.CheckedChanged += new System.EventHandler(this.includeDebtOption_CheckedChanged);
             // 
             // newAccText
             // 

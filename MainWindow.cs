@@ -14,7 +14,6 @@ namespace fTrack
     public partial class MainWindow : Form
     {
         accList accList = new accList();
-        int tempDebCount = 0;
         public MainWindow()
         {
             InitializeComponent();
@@ -46,7 +45,7 @@ namespace fTrack
             this.addAccButton.Visible = false;
             this.addDebtButton.Visible = false;
             this.addTransButton.Visible = false;
-            disableDebitAccList();
+            disableAccList();
         }
 
         private void returnToMain()
@@ -69,11 +68,18 @@ namespace fTrack
             this.AccBal.Visible = false;
             this.AccName.Visible = false;
             this.InterestRate.Visible = false;
-            genDebitAccList();
+            this.AccBal.Text = "";
+            this.AccName.Text = "";
+            this.InterestRate.Text = "";
+            totalSum();
+            enableAccList();
         }
 
         private void addDebtButton_Click(object sender, EventArgs e)
         {
+            this.AccBal.Visible = true;
+            this.AccName.Visible = true;
+            this.InterestRate.Visible = true;
             this.newDebtText.Visible = true;
             this.createAccCancel.Visible = true;
             this.credAccAdd.Visible = true;
@@ -90,10 +96,19 @@ namespace fTrack
 
         private void debtAccAdd_click(object sender, EventArgs e)
         {
-            double accBal = Convert.ToDouble(AccBal.Text);
-            string accName = Convert.ToString(AccName.Text);
-            double interestRate = Convert.ToDouble(InterestRate.Text);
+            double accBal;
+            string accName = string.IsNullOrEmpty(AccName.Text) ? "default" : AccName.Text;
+            double interestRate;
+            if (!double.TryParse(AccBal.Text, out accBal))
+            {
+                accBal = 0.00;
+            }
+            if (!double.TryParse(InterestRate.Text, out interestRate))
+            {
+                interestRate = 0.00;
+            }
             accList.createDebitAccount(accBal, accName, interestRate);
+            genDebitAccList();
             returnToMain();
         }
 
@@ -105,6 +120,19 @@ namespace fTrack
 
         private void credAccAdd_Click(object sender, EventArgs e)
         {
+            double accBal;
+            string accName = string.IsNullOrEmpty(AccName.Text) ? "default" : AccName.Text;
+            double interestRate;
+            if (!double.TryParse(AccBal.Text, out accBal))
+            {
+                accBal = 0.00;
+            }
+            if (!double.TryParse(InterestRate.Text, out interestRate))
+            {
+                interestRate = 0.00;
+            }
+            accList.createCreditAccount(accBal, accName, interestRate);
+            genCreditAccList();
             returnToMain();
         }
 
@@ -112,46 +140,197 @@ namespace fTrack
         {
             returnToMain();
         }
-        private void disableDebitAccList()
+
+        // Disable controls related to accounts
+        private void disableAccList()
         {
-            // Disable controls related to debit accounts
             foreach (Control control in this.Controls)
             {
-                if (control is TextBox textBox && textBox.Name.StartsWith("debAccount"))
+                if (control is Label label && (label.Name.StartsWith("debAccount") || label.Name.StartsWith("credAccount")))
                 {
-                    textBox.Enabled = false;
-                    textBox.Visible = false;
+                    label.Enabled = false;
+                    label.Visible = false;
+                }
+                if (control is Panel panel && (panel.Name.StartsWith("debAccount") || panel.Name.StartsWith("credAccount")))
+                {
+                    panel.Enabled = false;
+                    panel.Visible = false;
                 }
             }
         }
 
+        // Enable controls related to accounts
+        private void enableAccList()
+        {
+            foreach (Control control in this.Controls)
+            {
+                if (control is Panel panel && (panel.Name.StartsWith("debAccount") || panel.Name.StartsWith("credAccount")))
+                {
+                    panel.Enabled = true;
+                    panel.Visible = true;
+                    panel.SendToBack();
+                }
+                if (control is Label label && (label.Name.StartsWith("debAccount") || label.Name.StartsWith("credAccount")))
+                {
+                    label.Enabled = true;
+                    label.Visible = true;
+                    label.BringToFront();
+                }
+            }
+        }
+
+        // Generates Debit and Credit Account Lists
         private void genDebitAccList()
         {
             LinkedList<debitAccount> tempDebAccount = accList.getDebitAccount();
             int tempDebCount = tempDebAccount.Count;
 
-            // Clear previous debit account textboxes
+            // Clear previous debit account labels and panels
             foreach (Control control in this.Controls)
             {
-                if (control is TextBox textBox && textBox.Name.StartsWith("debAccount"))
+                if (control is Label label && label.Name.StartsWith("debAccount"))
                 {
-                    this.Controls.Remove(textBox);
-                    textBox.Dispose();
+                    this.Controls.Remove(label);
+                    label.Dispose();
+                }
+                if (control is Panel panel && panel.Name.StartsWith("debAccountPanel"))
+                {
+                    this.Controls.Remove(panel);
+                    panel.Dispose();
                 }
             }
 
-            // Generate textboxes for debit accounts
+            // Generate labels for debit accounts
             for (int i = 0; i < tempDebCount; i++)
             {
                 debitAccount tempDebitAccount = tempDebAccount.ElementAt(i);
-                TextBox textBox = new TextBox();
-                textBox.Text = tempDebitAccount.AccName;
-                textBox.Name = "debAccount" + (i + 1).ToString();
-                textBox.Location = new Point(42, 130 + (i * 30));
-                textBox.Font = new Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-                textBox.ReadOnly = true;
-                Controls.Add(textBox);
+
+                // Generates a background panel for appearance and container-looks
+                Panel backGroundPanel = new Panel();
+                backGroundPanel.Name = "debAccountPanel" + (i + 1).ToString();
+                backGroundPanel.BackColor = Color.White;
+                backGroundPanel.Size = new Size(250, 35);
+                backGroundPanel.Location = new Point(42, 130 + (i * 35));
+                backGroundPanel.BorderStyle = BorderStyle.FixedSingle;
+                this.Controls.Add(backGroundPanel);
+
+                // Generates label for displaying account name
+                Label nameLabel = new Label();
+                nameLabel.Text = tempDebitAccount.AccName;
+                nameLabel.Name = "debAccountName" + (i + 1).ToString();
+                nameLabel.Location = new Point(5, 5);
+                nameLabel.Size = new Size(150, 25);
+                nameLabel.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                nameLabel.TextAlign = ContentAlignment.MiddleLeft;
+                backGroundPanel.Controls.Add(nameLabel);
+
+                // Generates label for displaying account balance
+                Label balanceLabel = new Label();
+                balanceLabel.Text = tempDebitAccount.AccBal.ToString("C2");
+                balanceLabel.Name = "debAccountBalance" + (i + 1).ToString();
+                balanceLabel.Location = new Point(100, 5);
+                balanceLabel.Size = new Size(150, 25);
+                balanceLabel.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                balanceLabel.TextAlign = ContentAlignment.MiddleRight;
+                backGroundPanel.Controls.Add(balanceLabel);
             }
+        }
+        private void genCreditAccList()
+        {
+            LinkedList<creditAccount> tempCredAccount = accList.getCredAccount();
+            int tempCredCount = tempCredAccount.Count;
+
+            // Clear previous credit account labels and panels
+            foreach (Control control in this.Controls) 
+            {  
+                if (control is Label label && label.Name.StartsWith("credAccount"))
+                {
+                    this.Controls.Remove(label);
+                    label.Dispose();
+                }
+                if (control is Panel panel && panel.Name.StartsWith("credAccount"))
+                {
+                    this.Controls.Remove(panel);
+                    panel.Dispose();
+                }
+            }
+
+            // Generate labels for credit accounts
+            for (int i = 0; i< tempCredCount; i++)
+            {
+                creditAccount tempCreditAccount = tempCredAccount.ElementAt(i);
+
+                // Generates a background panel for appearance and container-looks
+                Panel backGroundPanel = new Panel();
+                backGroundPanel.Name = "credAccountPanel" + (i + 1).ToString();
+                backGroundPanel.BackColor = Color.White;
+                backGroundPanel.Size = new Size(250, 35);
+                backGroundPanel.Location = new Point(365, 130 + (i * 35));
+                backGroundPanel.BorderStyle = BorderStyle.FixedSingle;
+                this.Controls.Add(backGroundPanel);
+
+                // Generates label for displaying account name
+                Label nameLabel = new Label();
+                nameLabel.Text = tempCreditAccount.AccName;
+                nameLabel.Name = "credAccountName" + (i + 1).ToString();
+                nameLabel.Location = new Point(5, 5);
+                nameLabel.Size = new Size(150, 25);
+                nameLabel.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                nameLabel.TextAlign = ContentAlignment.MiddleLeft;
+                backGroundPanel.Controls.Add(nameLabel);
+
+                // Generates label for displaying account balance
+                Label balanceLabel = new Label();
+                balanceLabel.Text = tempCreditAccount.AccBal.ToString("C2");
+                balanceLabel.Name = "credAccountBalance" + (i + 1).ToString();
+                balanceLabel.Location = new Point(100, 5);
+                balanceLabel.Size = new Size(150, 25);
+                balanceLabel.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                balanceLabel.TextAlign = ContentAlignment.MiddleRight;
+                backGroundPanel.Controls.Add(balanceLabel);
+            }
+        }
+
+        // Provides a method for calculating the total balance in all of the accounts
+        private void totalSum()
+        {
+            if (includeDebtOption.Checked == true)
+            {
+                LinkedList<debitAccount> tempDebAccount = accList.getDebitAccount();
+                LinkedList<creditAccount> tempCredAccount = accList.getCredAccount();
+                int tempDebCount = tempDebAccount.Count;
+                int tempCredCount = tempCredAccount.Count;
+                double tempAccBal = 0;
+                for (int i = 0; i < tempDebCount; i++)
+                {
+                    debitAccount tempDebitAccount = tempDebAccount.ElementAt(i);
+                    tempAccBal += tempDebitAccount.AccBal;
+                }
+                for (int i = 0; i <  tempCredCount; i++)
+                {
+                    creditAccount tempCreditAccount = tempCredAccount.ElementAt(i);
+                    tempAccBal -= tempCreditAccount.AccBal;
+                }
+                cashTotal.Text = "$" + tempAccBal.ToString("N");
+            } else
+            {
+                LinkedList<debitAccount> tempDebAccount = accList.getDebitAccount();
+                int tempDebCount = tempDebAccount.Count;
+                double tempAccBal = 0;
+                for (int i = 0; i < tempDebCount; i++)
+                {
+                    debitAccount tempDebitAccount = tempDebAccount.ElementAt(i);
+                    tempAccBal += tempDebitAccount.AccBal;
+                }
+                cashTotal.Text = "$" + tempAccBal.ToString("N");
+            }
+            int center = this.ClientSize.Width / 2;
+            this.cashTotal.Location = new Point(center - (this.cashTotal.Width / 2), this.cashTotal.Location.Y);
+        }
+
+        private void includeDebtOption_CheckedChanged(object sender, EventArgs e)
+        {
+            totalSum();
         }
     }
 }
