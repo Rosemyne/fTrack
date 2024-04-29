@@ -8,6 +8,10 @@ namespace fTrack
 {
     internal class debitAccount: userAccount
     {
-        private int accType = 1;
+
+        public override void createAccount()
+        {
+            accType = 1;
+        }
     }
 }

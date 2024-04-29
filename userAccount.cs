@@ -8,12 +8,14 @@ namespace fTrack
 {
     abstract class userAccount
     {
-        private int accID;
-        private int accType;
-        private double accBal;
-        private string accName;
-        private bool IsVisible;
-        private double interestRate;
+        protected int accID;
+        protected int accType;
+        protected double accBal;
+        protected string accName;
+        protected bool isVisible;
+        protected double interestRate;
+
+        public abstract void createAccount();
 
     }
 }
