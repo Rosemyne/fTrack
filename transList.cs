@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -59,6 +60,42 @@ namespace fTrack
                 }
             }
             return null;
+        }
+
+        // Method to save to a file and read from it
+        public void SaveToFile(string filePath)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                foreach (Transaction transaction in transactions)
+                {
+                    writer.WriteLine($"{transaction.TransactionID},{transaction.SourceAccountID},{transaction.DestinationAccountID},{transaction.Amount},{transaction.Description}");
+                }
+            }
+        }
+
+        public void LoadFromFile(string filePath)
+        {
+            transactions.Clear();
+
+            string[] lines = File.ReadAllLines(filePath);
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split(',');
+                int transactionID = int.Parse(parts[0]);
+                int sourceAccountID = int.Parse(parts[1]);
+                int destinationAccountID = int.Parse(parts[2]);
+                double amount = double.Parse(parts[3]);
+                string description = parts[4];
+
+                transactions.Add(new Transaction(transactionID, sourceAccountID, destinationAccountID, amount, description));
+            }
+        }
+
+        // Gets count of transaction list for external use
+        public int TransactionCount
+        {
+            get { return transactions.Count; }
         }
     }
 }

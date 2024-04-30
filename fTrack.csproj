@@ -49,6 +49,7 @@
     <Compile Include="accList.cs" />
     <Compile Include="creditAccount.cs" />
     <Compile Include="debitAccount.cs" />
+    <Compile Include="Transaction.cs" />
     <Compile Include="transList.cs" />
     <Compile Include="userAccount.cs" />
     <Compile Include="MainWindow.cs">
