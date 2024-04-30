@@ -33,8 +33,24 @@ namespace fTrack
         // Method to process transsactions
         public void ProcessTransaction(accList accountList, Transaction transaction)
         {
-            userAccount sourceAccount = FindAccount(accountList, transaction.SourceAccountID);
-            userAccount destinationAccount = FindAccount(accountList, transaction.DestinationAccountID);
+            userAccount sourceAccount = null;
+            userAccount destinationAccount = null;
+
+            if (transaction.SourceAccountID == -1)
+            {
+                sourceAccount = new debitAccount();
+            } else
+            {
+                sourceAccount = FindAccount(accountList, transaction.SourceAccountID);
+            }
+
+            if (transaction.DestinationAccountID == -1)
+            {
+                destinationAccount = new creditAccount();
+            } else
+            {
+                destinationAccount = FindAccount(accountList, transaction.DestinationAccountID);
+            }
 
             if (sourceAccount != null && destinationAccount != null)
             {

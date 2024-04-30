@@ -167,17 +167,25 @@ namespace fTrack
 
         private void addTransButton_Click(object sender, EventArgs e)
         {
-            this.newTransText.Visible = true;
-            this.createAccCancel.Visible = true;
-            this.transactionAdd.Visible = true;
-            this.transAmount.Visible = true;
-            this.transDescription.Visible = true;
-            this.sourceLabel.Visible = true;
-            this.destinationLabel.Visible = true;
-            this.transAmountLabel.Visible = true;
-            this.transDescriptionLabel.Visible = true;
-            GenerateDropdownItems();
-            disableElems();
+            if (accountList.getDebitAccount().Count == 0 && accountList.getCredAccount().Count == 0)
+            {
+                MessageBox.Show("Please create accounts before adding a transaction");
+                return;
+            }
+            else
+            {
+                this.newTransText.Visible = true;
+                this.createAccCancel.Visible = true;
+                this.transactionAdd.Visible = true;
+                this.transAmount.Visible = true;
+                this.transDescription.Visible = true;
+                this.sourceLabel.Visible = true;
+                this.destinationLabel.Visible = true;
+                this.transAmountLabel.Visible = true;
+                this.transDescriptionLabel.Visible = true;
+                GenerateDropdownItems();
+                disableElems();
+            }
         }
 
         private void GenerateDropdownItems()
@@ -189,6 +197,8 @@ namespace fTrack
             sourceAccountDropdown.Location = new Point(653, 125);
             destinationAccountDropdown = GenerateComboBox();
             destinationAccountDropdown.Location = new Point(653, 154);
+            sourceAccountDropdown.Items.Add("");
+            destinationAccountDropdown.Items.Add("");
 
             foreach (debitAccount account in debAccounts)
             {
