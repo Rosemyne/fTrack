@@ -16,10 +16,10 @@ namespace fTrack
 
         public abstract void createAccount(int AccID, double AccBal, String AccName, double InterestRate);
 
-        public int AccID {  get { return accID; } }
-        public double AccBal { get {  return accBal; } }
-        public string AccName { get {  return accName; } }
-        public double InterestRate { get {  return interestRate; } }
-        public bool IsVisible { get { return isVisible; } }
+        public int AccID { get { return accID; } }
+        public double AccBal { get {  return accBal; } set { accBal = value; } }
+        public string AccName { get {  return accName; } set { accName = value; } }
+        public double InterestRate { get {  return interestRate; } set { interestRate = value; } }
+        public bool IsVisible { get { return isVisible; } set { isVisible = value; } }
     }
 }
