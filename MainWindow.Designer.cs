@@ -46,6 +46,9 @@
             this.AccName = new System.Windows.Forms.TextBox();
             this.AccBal = new System.Windows.Forms.TextBox();
             this.InterestRate = new System.Windows.Forms.TextBox();
+            this.accNameLabel = new System.Windows.Forms.Label();
+            this.accBalLabel = new System.Windows.Forms.Label();
+            this.interestRateLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cashTotal
@@ -231,11 +234,41 @@
             // InterestRate
             // 
             this.InterestRate.BackColor = System.Drawing.Color.White;
-            this.InterestRate.Location = new System.Drawing.Point(866, 213);
+            this.InterestRate.Location = new System.Drawing.Point(867, 193);
             this.InterestRate.Name = "InterestRate";
             this.InterestRate.Size = new System.Drawing.Size(325, 22);
             this.InterestRate.TabIndex = 21;
             this.InterestRate.Visible = false;
+            // 
+            // accNameLabel
+            // 
+            this.accNameLabel.AutoSize = true;
+            this.accNameLabel.Location = new System.Drawing.Point(758, 105);
+            this.accNameLabel.Name = "accNameLabel";
+            this.accNameLabel.Size = new System.Drawing.Size(95, 16);
+            this.accNameLabel.TabIndex = 22;
+            this.accNameLabel.Text = "Account Name";
+            this.accNameLabel.Visible = false;
+            // 
+            // accBalLabel
+            // 
+            this.accBalLabel.AutoSize = true;
+            this.accBalLabel.Location = new System.Drawing.Point(749, 157);
+            this.accBalLabel.Name = "accBalLabel";
+            this.accBalLabel.Size = new System.Drawing.Size(108, 16);
+            this.accBalLabel.TabIndex = 23;
+            this.accBalLabel.Text = "Account Balance";
+            this.accBalLabel.Visible = false;
+            // 
+            // interestRateLabel
+            // 
+            this.interestRateLabel.AutoSize = true;
+            this.interestRateLabel.Location = new System.Drawing.Point(779, 196);
+            this.interestRateLabel.Name = "interestRateLabel";
+            this.interestRateLabel.Size = new System.Drawing.Size(82, 16);
+            this.interestRateLabel.TabIndex = 24;
+            this.interestRateLabel.Text = "Interest Rate";
+            this.interestRateLabel.Visible = false;
             // 
             // MainWindow
             // 
@@ -245,6 +278,9 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1225, 528);
+            this.Controls.Add(this.interestRateLabel);
+            this.Controls.Add(this.accBalLabel);
+            this.Controls.Add(this.accNameLabel);
             this.Controls.Add(this.InterestRate);
             this.Controls.Add(this.AccBal);
             this.Controls.Add(this.AccName);
@@ -294,6 +330,9 @@
         private System.Windows.Forms.TextBox AccName;
         private System.Windows.Forms.TextBox AccBal;
         private System.Windows.Forms.TextBox InterestRate;
+        private System.Windows.Forms.Label accNameLabel;
+        private System.Windows.Forms.Label accBalLabel;
+        private System.Windows.Forms.Label interestRateLabel;
     }
 }
 

@@ -8,27 +8,75 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Timers;
+using System.IO;
 
 namespace fTrack
 {
     public partial class MainWindow : Form
     {
-        accList accList = new accList();
+        private accList accountList;
+        private System.Timers.Timer autoSaveTimer;
         public MainWindow()
         {
             InitializeComponent();
+            accountList = new accList();
+
+            // Checks if an accounts.txt file exists, if not, creates one
+            if (File.Exists("accounts.txt"))
+            {
+                accountList.LoadFromFile("accounts.txt");
+                genDebitAccList();
+                genCreditAccList();
+                totalSum();
+            } else
+            {
+                File.Create("accounts.txt");
+            }
+
+            // Starts an auto-save timer
+            StartAutoSaveTimer();
+
+            // Handles program exit
+            Closing += MainWindow_Closing;
         }
+
+        // Handles auto-saving
+        private void StartAutoSaveTimer()
+        {
+            autoSaveTimer = new System.Timers.Timer();
+            autoSaveTimer.Elapsed += AutoSaveTimer_Elapsed;
+            autoSaveTimer.Interval = TimeSpan.FromMinutes(10).TotalMilliseconds;
+            autoSaveTimer.AutoReset = true;
+            autoSaveTimer.Start();
+        }
+
+        private void AutoSaveTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            accountList.SaveToFile("accounts.txt");
+        }
+
+        // Handles saving on program exit
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            accountList.SaveToFile("accounts.txt");
+        }
+        
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
         }
 
+
         private void addAccButton_Click(object sender, EventArgs e)
         {
             this.AccBal.Visible = true;
+            this.accBalLabel.Visible = true;
             this.AccName.Visible = true;
+            this.accNameLabel.Visible = true;
             this.InterestRate.Visible = true;
+            this.interestRateLabel.Visible = true;
             this.newAccText.Visible = true;
             this.createAccCancel.Visible = true;
             this.debtAccAdd.Visible = true;
@@ -45,7 +93,7 @@ namespace fTrack
             this.addAccButton.Visible = false;
             this.addDebtButton.Visible = false;
             this.addTransButton.Visible = false;
-            disableAccList();
+            SetControlsEnabledAndVisible(false);
         }
 
         private void returnToMain()
@@ -71,15 +119,21 @@ namespace fTrack
             this.AccBal.Text = "";
             this.AccName.Text = "";
             this.InterestRate.Text = "";
+            this.accNameLabel.Visible = false;
+            this.accBalLabel.Visible = false;
+            this.interestRateLabel.Visible = false;
             totalSum();
-            enableAccList();
+            SetControlsEnabledAndVisible(true);
         }
 
         private void addDebtButton_Click(object sender, EventArgs e)
         {
             this.AccBal.Visible = true;
+            this.accBalLabel.Visible = true;
             this.AccName.Visible = true;
+            this.accNameLabel.Visible = true;
             this.InterestRate.Visible = true;
+            this.interestRateLabel.Visible = true;
             this.newDebtText.Visible = true;
             this.createAccCancel.Visible = true;
             this.credAccAdd.Visible = true;
@@ -107,7 +161,7 @@ namespace fTrack
             {
                 interestRate = 0.00;
             }
-            accList.createDebitAccount(accBal, accName, interestRate);
+            accountList.createDebitAccount(accBal, accName, interestRate);
             genDebitAccList();
             returnToMain();
         }
@@ -131,7 +185,7 @@ namespace fTrack
             {
                 interestRate = 0.00;
             }
-            accList.createCreditAccount(accBal, accName, interestRate);
+            accountList.createCreditAccount(accBal, accName, interestRate);
             genCreditAccList();
             returnToMain();
         }
@@ -141,40 +195,15 @@ namespace fTrack
             returnToMain();
         }
 
-        // Disable controls related to accounts
-        private void disableAccList()
+        // Method that sets the visibility property of controls
+        private void SetControlsEnabledAndVisible(bool enabled)
         {
             foreach (Control control in this.Controls)
             {
-                if (control is Label label && (label.Name.StartsWith("debAccount") || label.Name.StartsWith("credAccount")))
+                if ((control is Label || control is Panel) && (control.Name.StartsWith("debAccount") || control.Name.StartsWith("credAccount")))
                 {
-                    label.Enabled = false;
-                    label.Visible = false;
-                }
-                if (control is Panel panel && (panel.Name.StartsWith("debAccount") || panel.Name.StartsWith("credAccount")))
-                {
-                    panel.Enabled = false;
-                    panel.Visible = false;
-                }
-            }
-        }
-
-        // Enable controls related to accounts
-        private void enableAccList()
-        {
-            foreach (Control control in this.Controls)
-            {
-                if (control is Panel panel && (panel.Name.StartsWith("debAccount") || panel.Name.StartsWith("credAccount")))
-                {
-                    panel.Enabled = true;
-                    panel.Visible = true;
-                    panel.SendToBack();
-                }
-                if (control is Label label && (label.Name.StartsWith("debAccount") || label.Name.StartsWith("credAccount")))
-                {
-                    label.Enabled = true;
-                    label.Visible = true;
-                    label.BringToFront();
+                    control.Enabled = enabled;
+                    control.Visible = enabled;
                 }
             }
         }
@@ -182,7 +211,7 @@ namespace fTrack
         // Generates Debit and Credit Account Lists
         private void genDebitAccList()
         {
-            LinkedList<debitAccount> tempDebAccount = accList.getDebitAccount();
+            LinkedList<debitAccount> tempDebAccount = accountList.getDebitAccount();
             int tempDebCount = tempDebAccount.Count;
 
             // Clear previous debit account labels and panels
@@ -237,7 +266,7 @@ namespace fTrack
         }
         private void genCreditAccList()
         {
-            LinkedList<creditAccount> tempCredAccount = accList.getCredAccount();
+            LinkedList<creditAccount> tempCredAccount = accountList.getCredAccount();
             int tempCredCount = tempCredAccount.Count;
 
             // Clear previous credit account labels and panels
@@ -296,8 +325,8 @@ namespace fTrack
         {
             if (includeDebtOption.Checked == true)
             {
-                LinkedList<debitAccount> tempDebAccount = accList.getDebitAccount();
-                LinkedList<creditAccount> tempCredAccount = accList.getCredAccount();
+                LinkedList<debitAccount> tempDebAccount = accountList.getDebitAccount();
+                LinkedList<creditAccount> tempCredAccount = accountList.getCredAccount();
                 int tempDebCount = tempDebAccount.Count;
                 int tempCredCount = tempCredAccount.Count;
                 double tempAccBal = 0;
@@ -314,7 +343,7 @@ namespace fTrack
                 cashTotal.Text = "$" + tempAccBal.ToString("N");
             } else
             {
-                LinkedList<debitAccount> tempDebAccount = accList.getDebitAccount();
+                LinkedList<debitAccount> tempDebAccount = accountList.getDebitAccount();
                 int tempDebCount = tempDebAccount.Count;
                 double tempAccBal = 0;
                 for (int i = 0; i < tempDebCount; i++)
