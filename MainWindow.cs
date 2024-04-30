@@ -21,7 +21,7 @@ namespace fTrack
         private ComboBox destinationAccountDropdown;
         private Dictionary<string, int> debitAccountMapping = new Dictionary<string, int>();
         private Dictionary<string, int> creditAccountMapping = new Dictionary<string, int>();
-        private transList transactionList;
+        private transList transactionList = new transList();
         public MainWindow()
         {
             InitializeComponent();
@@ -42,6 +42,7 @@ namespace fTrack
             if(File.Exists("transactions.txt"))
             {
                 transactionList.LoadFromFile("transactions.txt");
+                genTransactionHistory();
             } else
             {
                 File.Create("transactions.txt");
@@ -137,6 +138,15 @@ namespace fTrack
             this.accNameLabel.Visible = false;
             this.accBalLabel.Visible = false;
             this.interestRateLabel.Visible = false;
+            this.transDescription.Visible = false;
+            this.transAmount.Visible = false;
+            this.sourceLabel.Visible = false;
+            this.destinationLabel.Visible = false;
+            this.transAmountLabel.Visible = false;
+            this.transDescriptionLabel.Visible = false;
+            genDebitAccList();
+            genCreditAccList();
+            genTransactionHistory();
             totalSum();
             SetControlsEnabledAndVisible(true);
         }
@@ -160,6 +170,12 @@ namespace fTrack
             this.newTransText.Visible = true;
             this.createAccCancel.Visible = true;
             this.transactionAdd.Visible = true;
+            this.transAmount.Visible = true;
+            this.transDescription.Visible = true;
+            this.sourceLabel.Visible = true;
+            this.destinationLabel.Visible = true;
+            this.transAmountLabel.Visible = true;
+            this.transDescriptionLabel.Visible = true;
             GenerateDropdownItems();
             disableElems();
         }
@@ -170,23 +186,21 @@ namespace fTrack
             LinkedList<creditAccount> credAccounts = accountList.getCredAccount();
 
             sourceAccountDropdown = GenerateComboBox();
-            sourceAccountDropdown.Location = new Point(700, 154);
+            sourceAccountDropdown.Location = new Point(653, 125);
             destinationAccountDropdown = GenerateComboBox();
-            destinationAccountDropdown.Location = new Point(700, 193);
+            destinationAccountDropdown.Location = new Point(653, 154);
 
             foreach (debitAccount account in debAccounts)
             {
-                string accountName = account.AccName;
-                sourceAccountDropdown.Items.Add(accountName);
-                destinationAccountDropdown.Items.Add(accountName);
-                debitAccountMapping.Add(accountName, account.AccID);
+                string accountKey = $"{account.AccName} (ID: {account.AccID})";
+                sourceAccountDropdown.Items.Add(accountKey);
+                destinationAccountDropdown.Items.Add(accountKey);
             }
             foreach (creditAccount account in credAccounts)
             {
-                string accountName = account.AccName;
-                sourceAccountDropdown.Items.Add(account.AccName);
-                destinationAccountDropdown.Items.Add(account.AccName);
-                creditAccountMapping.Add(accountName, account.AccID);
+                string accountKey = $"{account.AccName} (ID: {account.AccID})"; 
+                sourceAccountDropdown.Items.Add(accountKey);
+                destinationAccountDropdown.Items.Add(accountKey);
             }
             if (sourceAccountDropdown.Items.Count > 0)
                 sourceAccountDropdown.SelectedIndex = 0;
@@ -198,7 +212,7 @@ namespace fTrack
         {
             ComboBox comboBox = new ComboBox();
             comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox.Width = 200;
+            comboBox.Width = 240;
             this.Controls.Add(comboBox);
             return comboBox;
         }
@@ -219,7 +233,6 @@ namespace fTrack
                 interestRate = 0.00;
             }
             accountList.createDebitAccount(accBal, accName, interestRate);
-            genDebitAccList();
             returnToMain();
         }
 
@@ -244,31 +257,44 @@ namespace fTrack
                 interestRate = 0.00;
             }
             accountList.createCreditAccount(accBal, accName, interestRate);
-            genCreditAccList();
             returnToMain();
         }
 
         private void transactionAdd_Click(object sender, EventArgs e)
         {
-            int sourceAccountID = GetAccountID(sourceAccountDropdown.SelectedItem.ToString());
-            int destinationAccountID = GetAccountID(destinationAccountDropdown.SelectedItem.ToString());
+            // Gets the ID from the dropdown boxes
+            string selectedSourceAccount = sourceAccountDropdown.SelectedItem.ToString();
+            int sourceAccountID = ExtractAccountID(selectedSourceAccount);
+            string selectedDestinationAccount = destinationAccountDropdown.SelectedItem.ToString();
+            int destinationAccountID = ExtractAccountID(selectedDestinationAccount);
+            // Processes rest of transaction handling
             int transactionID = transactionList.TransactionCount + 1;
+            double amount;
+            if (!double.TryParse(transAmount.Text, out amount))
+            {
+                amount = 0.00;
+            }
+            string description = this.transDescription.Text;
             transactionList.AddTransaction(transactionID, sourceAccountID, destinationAccountID, amount, description);
+            Transaction lastTransaction = transactionList.Transactions.LastOrDefault();
+            transactionList.ProcessTransaction(accountList, lastTransaction);
             DisposeComboBoxes();
             returnToMain();
         }
 
-        private int GetAccountID(string accountName)
+        private int ExtractAccountID(string selectedItem)
         {
-            int accountID = -1;
-            if (debitAccountMapping.ContainsKey(accountName))
+            string[] parts = selectedItem.Split(new[] { " (ID: " }, StringSplitOptions.None);
+            if (parts.Length > 1)
             {
-                accountID = debitAccountMapping[accountName];
-            } else if (creditAccountMapping.ContainsKey(accountName))
-            {
-                accountID = creditAccountMapping[accountName];
+                string accountIDStr = parts[1].TrimEnd(')');
+                int accountID;
+                if (int.TryParse(accountIDStr, out accountID))
+                {
+                    return accountID;
+                }
             }
-            return accountID;
+            return -1;
         }
 
         // Disposes of dropdown boxes generated by the addition of a transaction
@@ -292,11 +318,59 @@ namespace fTrack
         {
             foreach (Control control in this.Controls)
             {
-                if ((control is Label || control is Panel) && (control.Name.StartsWith("debAccount") || control.Name.StartsWith("credAccount")))
+                if ((control is Label || control is Panel) && (control.Name.StartsWith("debAccount") || control.Name.StartsWith("credAccount") ||  control.Name.StartsWith("transaction")))
                 {
                     control.Enabled = enabled;
                     control.Visible = enabled;
                 }
+            }
+        }
+
+        // Generates transaction list
+
+        private void genTransactionHistory()
+        {
+            List<Transaction> transactions = transactionList.Transactions;
+            int transactionCount = transactions.Count;
+
+            // Clear previous transaction history labels and panels
+            foreach (Control control in this.Controls)
+            {
+                if (control is Label label && label.Name.StartsWith("transaction"))
+                {
+                    this.Controls.Remove(label);
+                    label.Dispose();
+                }
+                if (control is Panel panel && panel.Name.StartsWith("transactionPanel"))
+                {
+                    this.Controls.Remove(panel);
+                    panel.Dispose();
+                }
+            }
+
+            // Generate labels for transaction history
+            for (int i = 0; i < transactionCount; i++)
+            {
+                Transaction transaction = transactions[i];
+
+                // Generates a background panel for appearance and container-looks
+                Panel backGroundPanel = new Panel();
+                backGroundPanel.Name = "transactionPanel" + (i + 1).ToString();
+                backGroundPanel.BackColor = Color.White;
+                backGroundPanel.Size = new Size(240, 35);
+                backGroundPanel.Location = new Point(662, 130 + (i * 35));
+                backGroundPanel.BorderStyle = BorderStyle.FixedSingle;
+                this.Controls.Add(backGroundPanel);
+
+                // Generates label for displaying transaction details
+                Label transactionLabel = new Label();
+                transactionLabel.Text = $"Amount: {transaction.Amount}, Description: {transaction.Description}";
+                transactionLabel.Name = "transactionLabel" + (i + 1).ToString();
+                transactionLabel.Location = new Point(5, 5);
+                transactionLabel.Size = new Size(310, 25);
+                transactionLabel.Font = new Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                transactionLabel.TextAlign = ContentAlignment.MiddleLeft;
+                backGroundPanel.Controls.Add(transactionLabel);
             }
         }
 

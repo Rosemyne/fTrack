@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace fTrack
 {
@@ -15,6 +16,12 @@ namespace fTrack
         public transList()
         {
             transactions = new List<Transaction>();
+        }
+
+        // External access of List
+        public List<Transaction> Transactions
+        {
+            get { return transactions; }
         }
 
         // Method to add transactions
@@ -31,8 +38,26 @@ namespace fTrack
 
             if (sourceAccount != null && destinationAccount != null)
             {
-                sourceAccount.AccBal -= transaction.Amount;
-                destinationAccount.AccBal += transaction.Amount;
+                // Determine the types of accounts involved in the transaction
+                bool isSourceDebit = sourceAccount is debitAccount;
+                bool isDestinationDebit = destinationAccount is debitAccount;
+
+                // Handle the different scenarios based on the types of accounts
+                if (isSourceDebit && !isDestinationDebit) // Debit to Credit
+                {
+                    sourceAccount.AccBal -= transaction.Amount;
+                    destinationAccount.AccBal -= transaction.Amount;
+                }
+                else if (isSourceDebit && isDestinationDebit) // Debit to Debit
+                {
+                    sourceAccount.AccBal -= transaction.Amount;
+                    destinationAccount.AccBal += transaction.Amount;
+                }
+                else if (!isSourceDebit && isDestinationDebit) // Credit to Debit
+                {
+                    sourceAccount.AccBal += transaction.Amount;
+                    destinationAccount.AccBal += transaction.Amount;
+                }
             }
         }
 

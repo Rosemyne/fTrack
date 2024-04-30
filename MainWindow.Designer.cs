@@ -49,6 +49,12 @@
             this.accNameLabel = new System.Windows.Forms.Label();
             this.accBalLabel = new System.Windows.Forms.Label();
             this.interestRateLabel = new System.Windows.Forms.Label();
+            this.transAmount = new System.Windows.Forms.TextBox();
+            this.transDescription = new System.Windows.Forms.TextBox();
+            this.sourceLabel = new System.Windows.Forms.Label();
+            this.destinationLabel = new System.Windows.Forms.Label();
+            this.transDescriptionLabel = new System.Windows.Forms.Label();
+            this.transAmountLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // cashTotal
@@ -247,17 +253,17 @@
             this.accNameLabel.Name = "accNameLabel";
             this.accNameLabel.Size = new System.Drawing.Size(95, 16);
             this.accNameLabel.TabIndex = 22;
-            this.accNameLabel.Text = "Account Name";
+            this.accNameLabel.Text = "Account Name:";
             this.accNameLabel.Visible = false;
             // 
             // accBalLabel
             // 
             this.accBalLabel.AutoSize = true;
-            this.accBalLabel.Location = new System.Drawing.Point(749, 157);
+            this.accBalLabel.Location = new System.Drawing.Point(740, 157);
             this.accBalLabel.Name = "accBalLabel";
             this.accBalLabel.Size = new System.Drawing.Size(108, 16);
             this.accBalLabel.TabIndex = 23;
-            this.accBalLabel.Text = "Account Balance";
+            this.accBalLabel.Text = "Account Balance:";
             this.accBalLabel.Visible = false;
             // 
             // interestRateLabel
@@ -267,17 +273,78 @@
             this.interestRateLabel.Name = "interestRateLabel";
             this.interestRateLabel.Size = new System.Drawing.Size(82, 16);
             this.interestRateLabel.TabIndex = 24;
-            this.interestRateLabel.Text = "Interest Rate";
+            this.interestRateLabel.Text = "Interest Rate:";
             this.interestRateLabel.Visible = false;
+            // 
+            // transAmount
+            // 
+            this.transAmount.Location = new System.Drawing.Point(872, 225);
+            this.transAmount.Name = "transAmount";
+            this.transAmount.Size = new System.Drawing.Size(319, 22);
+            this.transAmount.TabIndex = 27;
+            this.transAmount.Visible = false;
+            // 
+            // transDescription
+            // 
+            this.transDescription.Location = new System.Drawing.Point(872, 120);
+            this.transDescription.Name = "transDescription";
+            this.transDescription.Size = new System.Drawing.Size(319, 22);
+            this.transDescription.TabIndex = 28;
+            this.transDescription.Visible = false;
+            // 
+            // sourceLabel
+            // 
+            this.sourceLabel.AutoSize = true;
+            this.sourceLabel.Location = new System.Drawing.Point(710, 154);
+            this.sourceLabel.Name = "sourceLabel";
+            this.sourceLabel.Size = new System.Drawing.Size(145, 16);
+            this.sourceLabel.TabIndex = 29;
+            this.sourceLabel.Text = "Select Source Account:";
+            this.sourceLabel.Visible = false;
+            // 
+            // destinationLabel
+            // 
+            this.destinationLabel.AutoSize = true;
+            this.destinationLabel.Location = new System.Drawing.Point(680, 193);
+            this.destinationLabel.Name = "destinationLabel";
+            this.destinationLabel.Size = new System.Drawing.Size(169, 16);
+            this.destinationLabel.TabIndex = 30;
+            this.destinationLabel.Text = "Select Destination Account:";
+            this.destinationLabel.Visible = false;
+            // 
+            // transDescriptionLabel
+            // 
+            this.transDescriptionLabel.AutoSize = true;
+            this.transDescriptionLabel.Location = new System.Drawing.Point(775, 124);
+            this.transDescriptionLabel.Name = "transDescriptionLabel";
+            this.transDescriptionLabel.Size = new System.Drawing.Size(78, 16);
+            this.transDescriptionLabel.TabIndex = 31;
+            this.transDescriptionLabel.Text = "Description:";
+            this.transDescriptionLabel.Visible = false;
+            // 
+            // transAmountLabel
+            // 
+            this.transAmountLabel.AutoSize = true;
+            this.transAmountLabel.Location = new System.Drawing.Point(797, 228);
+            this.transAmountLabel.Name = "transAmountLabel";
+            this.transAmountLabel.Size = new System.Drawing.Size(55, 16);
+            this.transAmountLabel.TabIndex = 32;
+            this.transAmountLabel.Text = "Amount:";
+            this.transAmountLabel.Visible = false;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.AutoSize = true;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1225, 528);
+            this.Controls.Add(this.transAmountLabel);
+            this.Controls.Add(this.transDescriptionLabel);
+            this.Controls.Add(this.destinationLabel);
+            this.Controls.Add(this.sourceLabel);
+            this.Controls.Add(this.transDescription);
+            this.Controls.Add(this.transAmount);
             this.Controls.Add(this.interestRateLabel);
             this.Controls.Add(this.accBalLabel);
             this.Controls.Add(this.accNameLabel);
@@ -333,6 +400,12 @@
         private System.Windows.Forms.Label accNameLabel;
         private System.Windows.Forms.Label accBalLabel;
         private System.Windows.Forms.Label interestRateLabel;
+        private System.Windows.Forms.TextBox transAmount;
+        private System.Windows.Forms.TextBox transDescription;
+        private System.Windows.Forms.Label sourceLabel;
+        private System.Windows.Forms.Label destinationLabel;
+        private System.Windows.Forms.Label transDescriptionLabel;
+        private System.Windows.Forms.Label transAmountLabel;
     }
 }
 
